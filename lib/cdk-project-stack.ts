@@ -35,12 +35,19 @@ export class CdkProjectStack extends cdk.Stack {
 
     const ec2Instance = new ec2.Instance(this, 'FreeTierEC2', {
       vpc,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO), // Free Tier
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC,
+      },
+      associatePublicIpAddress: true,
+      instanceType: ec2.InstanceType.of(
+        ec2.InstanceClass.T3,
+        ec2.InstanceSize.MICRO
+      ),
       machineImage: new ec2.AmazonLinuxImage({
         generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
       }),
       securityGroup: sg,
-      keyName, // must exist in AWS
+      keyName,
     });
 
     ec2Instance.userData.addCommands(
